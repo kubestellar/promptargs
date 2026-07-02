@@ -16,7 +16,7 @@ Review src/app.ts for security issues.
 
 That's it. That's the whole idea.
 
-Works as a **CLI** and as a **Claude Code skill**.
+Works as a **CLI** and as a **skill** in Claude Code, Copilot, Goose, and Bob.
 
 ---
 
@@ -34,9 +34,9 @@ Or just run it without installing:
 npx @kubestellar/promptargs help
 ```
 
-### As a Skill (Claude Code, Copilot, Goose, Bob)
+### As a Skill
 
-This repo includes skill files for multiple AI CLIs. Copy the one you use:
+This repo ships skill files for multiple AI coding tools. Install the one(s) you use:
 
 **Claude Code:**
 ```bash
@@ -279,28 +279,35 @@ I learn best with examples and analogies.
 
 ---
 
-## Use with Claude
+## Use with AI Coding Tools
 
-### Pipe to Claude CLI
+### Pipe to any CLI
+
+promptargs works with any AI tool that accepts piped input:
 
 ```bash
+# Claude
 promptargs review --file=src/main.ts --no-interactive | claude -p "do this review"
+
+# Goose
+promptargs review --file=src/main.ts --no-interactive | goose run
+
+# Copilot
+promptargs review --file=src/main.ts --no-interactive | gh copilot explain
 ```
 
-### As a Claude Code skill
+### As a skill inside your AI tool
 
-Type `/promptargs` inside any Claude Code session:
+If you installed the skill (see [Install](#as-a-skill)), use it directly inside your session:
 
+**Claude Code:**
 ```
 /promptargs review --file=src/api.ts
 ```
 
-Claude runs the template and uses the expanded prompt as context for the task.
+**Goose / Bob:** The skill is automatically available after install — ask your agent to "use promptargs" or run a template.
 
-```
-/promptargs list          # show available templates
-/promptargs init          # create starter templates
-```
+**Copilot:** The instructions in `.github/copilot-instructions.md` teach Copilot about promptargs when you're in a repo that has it.
 
 ---
 
@@ -317,7 +324,8 @@ Claude runs the template and uses the expanded prompt as context for the task.
 | `--no-interactive` | Skip questions, use defaults only |
 | `--json` | Output as JSON |
 | `--status` | Output status line only |
-| `/promptargs review --file=x` | Claude Code skill |
+| `... \| claude -p "do this"` | Pipe to Claude |
+| `... \| goose run` | Pipe to Goose |
 
 ---
 
