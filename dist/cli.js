@@ -30,6 +30,7 @@ Usage:
 
 Flags:
   --no-interactive    Skip interactive prompts (use defaults/auto only)
+  --cross             Cross-product mode: all combinations of array values
   --parallel          Run array iterations in parallel (print all at once)
   --json              Output as JSON instead of plain text
   --status            Print status line only (for IDE integration)
@@ -38,6 +39,10 @@ Array values:
   --file=a.go,b.go    Comma-separated → one run per value
   --file="src/*.go"   Glob → expands to matching files
   --file=@list.txt    File → one value per line
+
+Iteration modes:
+  Default (zip):      --file=a,b --focus=x,y  → 2 runs (a+x, b+y)
+  Cross-product:      --file=a,b --focus=x,y --cross  → 4 runs (a+x, a+y, b+x, b+y)
 
 Templates live in:
   .prompts/           Project-level (checked into repo)
@@ -78,6 +83,7 @@ async function main() {
     const templateName = args[0];
     const flags = parseFlags(args.slice(1));
     const interactive = !flags['no-interactive'];
+    const cross = 'cross' in flags;
     const asJson = 'json' in flags;
     const statusOnly = 'status' in flags;
     // Check for inline template (quoted string with {{vars}})
@@ -105,7 +111,7 @@ async function main() {
         console.log(content);
         return;
     }
-    const { iterations } = await resolve(vars, flags, interactive);
+    const { iterations } = await resolve(vars, flags, interactive, cross);
     if (statusOnly) {
         const status = renderStatus(name, vars, iterations[0]);
         console.log(status);
