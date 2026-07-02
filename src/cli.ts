@@ -18,6 +18,7 @@ import { findTemplate, loadTemplates } from './loader.js';
 import { resolve } from './resolver.js';
 import { renderStatus } from './status.js';
 import { autodetect, AUTODETECT_VARS } from './autodetect.js';
+import { startUI } from './ui.js';
 
 const HELP = `
 promptargs — Template arguments for AI prompts 🏴‍☠️
@@ -29,6 +30,7 @@ Usage:
   promptargs init                      Create .prompts/ with examples
   promptargs show <template>           Preview a template
   promptargs env                       Show auto-detected variable values
+  promptargs ui                        Open the builder UI in your browser
   promptargs help                      Show this help
 
 Flags:
@@ -77,6 +79,13 @@ async function main() {
 
   if (args[0] === 'env') {
     printEnv();
+    return;
+  }
+
+  if (args[0] === 'ui') {
+    const flags = parseFlags(args.slice(1));
+    const port = flags['port'] ? Number(flags['port']) : undefined;
+    startUI(port);
     return;
   }
 
