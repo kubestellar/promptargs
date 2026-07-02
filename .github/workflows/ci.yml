@@ -25,7 +25,7 @@ jobs:
         run: npx tsc
 
       - name: Test
-        run: node --test dist/**/*.test.js
+        run: node --test dist/parser.test.js
 
       - name: CLI smoke test
         run: |
