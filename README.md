@@ -110,11 +110,13 @@ Variables with `=something` already have a default. Variables without one will a
 
 ## How Blanks Work
 
+Powered by [Mustache](https://mustache.github.io/) — a logic-less template language available in every major language.
+
 A blank looks like this: `{{name}}`
 
-A blank with a default looks like this: `{{name=hello}}`
+A blank with a default looks like this: `{{name=hello}}` (promptargs extension)
 
-That's all the syntax there is. Two curly braces, a name, optionally an equals sign and a default.
+That's the basics. You also get the full Mustache spec — comments (`{{! ignore me}}`), sections, partials, and more.
 
 ### Red means "you need to fill this in"
 
@@ -163,17 +165,28 @@ Want to review 5 files? Don't run the command 5 times. Use a comma:
 promptargs review --file=api.go,auth.go,db.go,cache.go,main.go
 ```
 
-promptargs runs the template **once for each value**:
+promptargs runs the template **once for each value** and prints each expanded result separated by `---`:
+
+```
+Review api.go for correctness issues.
+Be concise in your feedback.
+Focus on real bugs, not style nitpicks.
+---
+Review auth.go for correctness issues.
+Be concise in your feedback.
+Focus on real bugs, not style nitpicks.
+---
+Review db.go for correctness issues.
+...
+```
+
+Status lines showing iteration progress go to stderr:
 
 ```
 ✅ review [1/5]: file=api.go    focus=correctness  tone=concise
 ✅ review [2/5]: file=auth.go   focus=correctness  tone=concise
-✅ review [3/5]: file=db.go     focus=correctness  tone=concise
-✅ review [4/5]: file=cache.go  focus=correctness  tone=concise
-✅ review [5/5]: file=main.go   focus=correctness  tone=concise
+...
 ```
-
-Each one gets its own expanded prompt, separated by `---`.
 
 ### Three ways to pass arrays
 

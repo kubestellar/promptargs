@@ -1,5 +1,6 @@
 /**
  * Parse {{variables}} and {{variables=defaults}} from template strings.
+ * Uses Mustache for expansion, with a promptargs extension for defaults.
  */
 export interface TemplateVar {
     name: string;

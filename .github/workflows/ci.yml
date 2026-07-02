@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: npm install
+
+      - name: Build
+        run: npx tsc
+
+      - name: Test
+        run: node --test dist/parser.test.js
+
+      - name: CLI smoke test
+        run: |
+          node dist/cli.js help
+          node dist/cli.js env
+          node dist/cli.js "Hello {{name}}" --name=World --no-interactive
+          node dist/cli.js "Review {{file}} for {{focus}}" --file=a.go,b.go --focus=x,y --cross --no-interactive
