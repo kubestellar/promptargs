@@ -1,0 +1,652 @@
+<title>promptargs builder</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a2e;
+    color: #e8e4dc;
+    font-family: system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 32px 24px;
+  }
+
+  .shell {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .brand-name {
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #e8e4dc;
+    letter-spacing: -0.5px;
+  }
+
+  .brand-name b { color: #d4a447; }
+
+  .brand-tag {
+    font-size: 11px;
+    color: #6b7a8d;
+    letter-spacing: 0.3px;
+  }
+
+  /* --- Sections --- */
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6b7a8d;
+  }
+
+  /* --- Template textarea --- */
+  .template-input {
+    width: 100%;
+    min-height: 80px;
+    background: #2a2a42;
+    border: 1px solid #3a3a56;
+    border-radius: 4px;
+    color: #e8e4dc;
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 12px 14px;
+    resize: vertical;
+  }
+
+  .template-input:focus {
+    outline: none;
+    border-color: #d4a447;
+  }
+
+  .template-input::placeholder { color: #4a4a66; }
+
+  /* --- Variable table --- */
+  .var-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .var-table th {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #6b7a8d;
+    text-align: left;
+    padding: 0 4px 6px;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .var-table td {
+    padding: 2px 4px;
+  }
+
+  .var-table .col-name { width: 25%; }
+  .var-table .col-values { width: 45%; }
+  .var-table .col-source { width: 22%; }
+  .var-table .col-rm { width: 8%; text-align: center; }
+
+  .var-input {
+    width: 100%;
+    background: #2a2a42;
+    border: 1px solid #3a3a56;
+    border-radius: 3px;
+    color: #e8e4dc;
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 13px;
+    padding: 7px 8px;
+  }
+
+  .var-input:focus {
+    outline: none;
+    border-color: #d4a447;
+  }
+
+  .var-input.auto-detected {
+    color: #6b7a8d;
+    font-style: italic;
+  }
+
+  .var-input::placeholder { color: #4a4a66; }
+
+  .source-select {
+    width: 100%;
+    background: #2a2a42;
+    border: 1px solid #3a3a56;
+    border-radius: 3px;
+    color: #e8e4dc;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 12px;
+    padding: 7px 6px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7a8d'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 24px;
+  }
+
+  .source-select:focus {
+    outline: none;
+    border-color: #d4a447;
+  }
+
+  .rm-btn {
+    background: none;
+    border: none;
+    color: #6b7a8d;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 3px;
+    line-height: 1;
+  }
+
+  .rm-btn:hover { color: #e05252; background: rgba(224, 82, 82, 0.1); }
+  .rm-btn:focus-visible { outline: 2px solid #d4a447; outline-offset: 1px; }
+
+  .add-row {
+    background: none;
+    border: 1px dashed #3a3a56;
+    border-radius: 3px;
+    color: #6b7a8d;
+    font-size: 12px;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 6px 12px;
+    cursor: pointer;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+
+  .add-row:hover { border-color: #d4a447; color: #d4a447; }
+  .add-row:focus-visible { outline: 2px solid #d4a447; outline-offset: 1px; }
+
+  /* --- Mode toggle --- */
+  .mode-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mode-toggle {
+    display: flex;
+    border: 1px solid #3a3a56;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .mode-btn {
+    background: #2a2a42;
+    border: none;
+    color: #6b7a8d;
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 12px;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .mode-btn + .mode-btn { border-left: 1px solid #3a3a56; }
+  .mode-btn:hover { color: #e8e4dc; }
+  .mode-btn:focus-visible { outline: 2px solid #d4a447; outline-offset: -2px; }
+
+  .mode-btn.active {
+    background: #d4a447;
+    color: #1a1a2e;
+    font-weight: 700;
+  }
+
+  .mode-desc {
+    font-size: 12px;
+    color: #6b7a8d;
+  }
+
+  /* --- Preview --- */
+  .preview-box {
+    background: #0e0e1c;
+    border: 1px solid #2a2a42;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .preview-header {
+    background: #1e1e34;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #2a2a42;
+  }
+
+  .preview-title {
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 11px;
+    color: #6b7a8d;
+  }
+
+  .preview-count {
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .preview-count.has-results { color: #4caf6a; }
+  .preview-count.empty { color: #6b7a8d; }
+
+  .preview-body {
+    padding: 14px;
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    max-height: 320px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .preview-body .iteration {
+    padding: 6px 0;
+  }
+
+  .preview-body .iteration + .iteration {
+    border-top: 1px dashed #2a2a42;
+    margin-top: 6px;
+    padding-top: 10px;
+  }
+
+  .preview-body .iter-label {
+    font-size: 11px;
+    color: #4caf6a;
+    margin-bottom: 4px;
+  }
+
+  .preview-body .expanded-text { color: #e8e4dc; }
+
+  .preview-body .unfilled {
+    color: #e05252;
+    font-weight: 700;
+  }
+
+  .preview-empty {
+    color: #4a4a66;
+    font-style: italic;
+  }
+
+  /* --- CLI command --- */
+  .cli-box {
+    background: #0e0e1c;
+    border: 1px solid #2a2a42;
+    border-radius: 4px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .cli-text {
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 12px;
+    color: #e8e4dc;
+    flex: 1;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .cli-text .dollar { color: #4caf6a; margin-right: 6px; }
+
+  .copy-btn {
+    background: #2a2a42;
+    border: 1px solid #3a3a56;
+    border-radius: 3px;
+    color: #d4a447;
+    font-size: 11px;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .copy-btn:hover { background: #3a3a56; }
+  .copy-btn:focus-visible { outline: 2px solid #d4a447; outline-offset: 1px; }
+  .copy-btn.copied { color: #4caf6a; border-color: #4caf6a; }
+
+  /* --- Responsive --- */
+  @media (max-width: 520px) {
+    body { padding: 20px 14px; }
+    .var-table .col-source { display: none; }
+    .var-table th:nth-child(3) { display: none; }
+    .var-table td:nth-child(3) { display: none; }
+    .var-table .col-name { width: 30%; }
+    .var-table .col-values { width: 58%; }
+  }
+</style>
+
+<div class="shell">
+  <div class="brand">
+    <div class="brand-name">prompt<b>args</b></div>
+    <div class="brand-tag">builder</div>
+  </div>
+
+  <div class="section">
+    <label class="section-label" for="tmpl">Template</label>
+    <textarea class="template-input" id="tmpl" placeholder="Review {{file}} for {{focus=correctness}} issues.&#10;Be {{tone=concise}} in your feedback." spellcheck="false"></textarea>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Variables</div>
+    <div style="overflow-x: auto;">
+      <table class="var-table">
+        <thead>
+          <tr>
+            <th class="col-name">Name</th>
+            <th class="col-values">Value(s)</th>
+            <th class="col-source">Source</th>
+            <th class="col-rm"></th>
+          </tr>
+        </thead>
+        <tbody id="var-body"></tbody>
+      </table>
+    </div>
+    <button class="add-row" id="add-var" type="button">+ add variable</button>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Array mode</div>
+    <div class="mode-row">
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="zip" type="button">zip</button>
+        <button class="mode-btn" data-mode="cross" type="button">cross</button>
+      </div>
+      <span class="mode-desc" id="mode-desc">Arrays pair up 1:1</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Preview</div>
+    <div class="preview-box">
+      <div class="preview-header">
+        <span class="preview-title">expanded output</span>
+        <span class="preview-count empty" id="preview-count">0 results</span>
+      </div>
+      <div class="preview-body" id="preview-body">
+        <span class="preview-empty">Type a template above...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">CLI command</div>
+    <div class="cli-box">
+      <div class="cli-text" id="cli-text"><span class="dollar">$</span>promptargs</div>
+      <button class="copy-btn" id="copy-btn" type="button">Copy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const VAR_RE = /\{\{(\w+)(?:=([^}]*))?\}\}/g;
+  const DEBOUNCE_MS = 120;
+
+  let mode = 'zip';
+  let debounceTimer = null;
+
+  const tmpl = document.getElementById('tmpl');
+  const varBody = document.getElementById('var-body');
+  const addBtn = document.getElementById('add-var');
+  const previewBody = document.getElementById('preview-body');
+  const previewCount = document.getElementById('preview-count');
+  const cliText = document.getElementById('cli-text');
+  const copyBtn = document.getElementById('copy-btn');
+  const modeDesc = document.getElementById('mode-desc');
+
+  function parseVarsFromTemplate(text) {
+    const seen = new Set();
+    const vars = [];
+    let m;
+    VAR_RE.lastIndex = 0;
+    while ((m = VAR_RE.exec(text)) !== null) {
+      if (!seen.has(m[1])) {
+        seen.add(m[1]);
+        vars.push({ name: m[1], defaultValue: m[2] });
+      }
+    }
+    return vars;
+  }
+
+  function getRowData() {
+    const rows = [];
+    for (const tr of varBody.querySelectorAll('tr')) {
+      const name = tr.querySelector('.var-name').value.trim();
+      const values = tr.querySelector('.var-values').value.trim();
+      const source = tr.querySelector('.var-source').value;
+      if (name) rows.push({ name, values, source });
+    }
+    return rows;
+  }
+
+  function syncVarsFromTemplate() {
+    const text = tmpl.value;
+    const parsed = parseVarsFromTemplate(text);
+    const existing = getRowData();
+    const existingNames = new Set(existing.map(r => r.name));
+
+    for (const v of parsed) {
+      if (!existingNames.has(v.name)) {
+        addVarRow(v.name, v.defaultValue || '', 'manual');
+      }
+    }
+  }
+
+  function addVarRow(name, values, source) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="col-name"><input class="var-input var-name" value="${esc(name)}" placeholder="name" spellcheck="false"></td>
+      <td class="col-values"><input class="var-input var-values" value="${esc(values)}" placeholder="value1,value2,..." spellcheck="false"></td>
+      <td class="col-source"><select class="source-select var-source">
+        <option value="manual"${source === 'manual' ? ' selected' : ''}>manual</option>
+        <option value="glob"${source === 'glob' ? ' selected' : ''}>glob</option>
+        <option value="file"${source === 'file' ? ' selected' : ''}>@file</option>
+      </select></td>
+      <td class="col-rm"><button class="rm-btn" type="button" title="Remove">&times;</button></td>
+    `;
+    tr.querySelector('.rm-btn').addEventListener('click', () => { tr.remove(); scheduleUpdate(); });
+    for (const input of tr.querySelectorAll('input, select')) {
+      input.addEventListener('input', scheduleUpdate);
+    }
+    varBody.appendChild(tr);
+  }
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function splitValues(raw, source) {
+    if (!raw) return [];
+    if (source === 'file') return [raw];
+    return raw.split(',').map(s => s.trim()).filter(Boolean);
+  }
+
+  function cartesian(arrays) {
+    if (arrays.length === 0) return [[]];
+    const first = arrays[0];
+    const rest = cartesian(arrays.slice(1));
+    const out = [];
+    for (const v of first) {
+      for (const r of rest) {
+        out.push([v, ...r]);
+      }
+    }
+    return out;
+  }
+
+  function zip(arrays) {
+    const maxLen = Math.max(...arrays.map(a => a.length), 1);
+    const out = [];
+    for (let i = 0; i < maxLen; i++) {
+      out.push(arrays.map(a => a[Math.min(i, a.length - 1)]));
+    }
+    return out;
+  }
+
+  function expand(template, values) {
+    let result = template;
+    VAR_RE.lastIndex = 0;
+    result = result.replace(VAR_RE, (match, name, def) => {
+      if (name in values) return values[name];
+      if (def !== undefined) return def;
+      return match;
+    });
+    return result;
+  }
+
+  function highlightUnfilled(html) {
+    return html.replace(/\{\{(\w+)(?:=[^}]*)?\}\}/g, '<span class="unfilled">$&</span>');
+  }
+
+  function update() {
+    const text = tmpl.value;
+    const rows = getRowData();
+
+    if (!text.trim()) {
+      previewBody.innerHTML = '<span class="preview-empty">Type a template above...</span>';
+      previewCount.textContent = '0 results';
+      previewCount.className = 'preview-count empty';
+      cliText.innerHTML = '<span class="dollar">$</span>promptargs';
+      return;
+    }
+
+    const arrayVars = [];
+    const scalarValues = {};
+
+    for (const row of rows) {
+      const vals = splitValues(row.values, row.source);
+      if (vals.length > 1) {
+        arrayVars.push({ name: row.name, values: vals, source: row.source });
+      } else if (vals.length === 1) {
+        scalarValues[row.name] = vals[0];
+      }
+    }
+
+    let combos;
+    if (arrayVars.length === 0) {
+      combos = [[]];
+    } else if (mode === 'cross') {
+      combos = cartesian(arrayVars.map(v => v.values));
+    } else {
+      combos = zip(arrayVars.map(v => v.values));
+    }
+
+    const results = [];
+    for (const combo of combos) {
+      const vals = { ...scalarValues };
+      arrayVars.forEach((v, i) => { vals[v.name] = combo[i]; });
+      results.push({ values: { ...vals }, expanded: expand(text, vals) });
+    }
+
+    const count = results.length;
+    previewCount.textContent = count === 1 ? '1 result' : `${count} results`;
+    previewCount.className = count > 0 ? 'preview-count has-results' : 'preview-count empty';
+
+    let html = '';
+    for (let i = 0; i < results.length; i++) {
+      const r = results[i];
+      const labelParts = Object.entries(r.values).map(([k, v]) => `${k}=${v}`).join('  ');
+      html += `<div class="iteration">`;
+      if (results.length > 1) {
+        html += `<div class="iter-label">[${i + 1}/${count}] ${escHtml(labelParts)}</div>`;
+      }
+      html += `<div class="expanded-text">${highlightUnfilled(escHtml(r.expanded))}</div>`;
+      html += `</div>`;
+    }
+    previewBody.innerHTML = html || '<span class="preview-empty">No output</span>';
+
+    // Build CLI command
+    let cli = 'promptargs';
+    const hasInline = !text.includes('\n') && text.length < 200;
+    if (hasInline) {
+      cli += ` "${text.replace(/"/g, '\\"')}"`;
+    }
+    for (const row of rows) {
+      if (!row.values) continue;
+      const prefix = row.source === 'file' ? '@' : '';
+      const val = row.source === 'glob' ? `"${row.values}"` : `${prefix}${row.values}`;
+      cli += ` --${row.name}=${val}`;
+    }
+    if (mode === 'cross' && arrayVars.length > 1) {
+      cli += ' --cross';
+    }
+
+    cliText.innerHTML = `<span class="dollar">$</span>${escHtml(cli)}`;
+  }
+
+  function scheduleUpdate() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      syncVarsFromTemplate();
+      update();
+    }, DEBOUNCE_MS);
+  }
+
+  // Event listeners
+  tmpl.addEventListener('input', scheduleUpdate);
+  addBtn.addEventListener('click', () => { addVarRow('', '', 'manual'); });
+
+  for (const btn of document.querySelectorAll('.mode-btn')) {
+    btn.addEventListener('click', () => {
+      for (const b of document.querySelectorAll('.mode-btn')) b.classList.remove('active');
+      btn.classList.add('active');
+      mode = btn.dataset.mode;
+      modeDesc.textContent = mode === 'zip' ? 'Arrays pair up 1:1' : 'Every combination of every value';
+      update();
+    });
+  }
+
+  copyBtn.addEventListener('click', () => {
+    const text = cliText.textContent.replace(/^\$\s*/, '');
+    navigator.clipboard.writeText(text).then(() => {
+      copyBtn.textContent = 'Copied';
+      copyBtn.classList.add('copied');
+      setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 1500);
+    });
+  });
+
+  // Seed with example
+  tmpl.value = 'Review {{file}} for {{focus=correctness}} issues.\nBe {{tone=concise}} in your feedback.';
+  syncVarsFromTemplate();
+  // Pre-fill the file var with an array to show the feature
+  const firstRow = varBody.querySelector('tr');
+  if (firstRow) {
+    firstRow.querySelector('.var-values').value = 'api.go,auth.go,db.go';
+  }
+  update();
+})();
+</script>
