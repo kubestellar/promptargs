@@ -1,10 +1,8 @@
 # promptargs 🎲
 
-**Mad Libs for AI prompts.**
+**Template arguments for AI prompts.**
 
-You know Mad Libs? The game where you fill in blanks to make silly stories?
-
-**promptargs** does the same thing, but for AI prompts. You write a template with blanks (`{{like_this}}`), and promptargs fills them in.
+You write a prompt with blanks (`{{like_this}}`), and promptargs fills them in.
 
 ```
 Review {{file}} for {{focus}} issues.
@@ -18,19 +16,35 @@ Review src/app.ts for security issues.
 
 That's it. That's the whole idea.
 
+Works as a **CLI** and as a **Claude Code skill**.
+
 ---
 
 ## Install
 
+### CLI
+
 ```bash
-npm install -g promptargs
+npm install -g @kubestellar/promptargs
 ```
 
 Or just run it without installing:
 
 ```bash
-npx promptargs help
+npx @kubestellar/promptargs help
 ```
+
+### Claude Code Skill
+
+Copy the skill file to your global Claude Code skills:
+
+```bash
+mkdir -p ~/.claude/skills
+curl -o ~/.claude/skills/promptargs.md \
+  https://raw.githubusercontent.com/kubestellar/promptargs/main/.claude/skills/promptargs.md
+```
+
+Now `/promptargs` works in every Claude Code session.
 
 ---
 
@@ -250,6 +264,31 @@ I learn best with examples and analogies.
 
 ---
 
+## Use with Claude
+
+### Pipe to Claude CLI
+
+```bash
+promptargs review --file=src/main.ts --no-interactive | claude -p "do this review"
+```
+
+### As a Claude Code skill
+
+Type `/promptargs` inside any Claude Code session:
+
+```
+/promptargs review --file=src/api.ts
+```
+
+Claude runs the template and uses the expanded prompt as context for the task.
+
+```
+/promptargs list          # show available templates
+/promptargs init          # create starter templates
+```
+
+---
+
 ## Cheat Sheet
 
 | Command | What it does |
@@ -263,6 +302,7 @@ I learn best with examples and analogies.
 | `--no-interactive` | Skip questions, use defaults only |
 | `--json` | Output as JSON |
 | `--status` | Output status line only |
+| `/promptargs review --file=x` | Claude Code skill |
 
 ---
 
