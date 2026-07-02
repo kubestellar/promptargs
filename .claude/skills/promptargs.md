@@ -88,12 +88,42 @@ promptargs review --file=src/main.ts --no-interactive | claude -p "do this"
 
 Or use the expanded prompt as context for the current conversation — read the output and act on it directly.
 
+## Status line
+
+When running a template, ALWAYS run `promptargs env` first and display the auto-detected variable values to the user. This shows what promptargs already knows:
+
+```bash
+promptargs env
+```
+
+Output looks like:
+```
+Auto-detected variables:
+
+  {{branch}} = main
+  {{repo}} = my-project
+  {{org}} = kubestellar
+  {{diff}} = (not detected)
+  {{pr}} = (not detected)
+  {{user}} = Andy Anderson
+  {{date}} = 2026-07-02
+```
+
+After running a template with `--status`, show the fill state:
+```bash
+promptargs review --file=main.go --status
+```
+
+Output: `✅ review: file=main.go  focus=correctness(default)  tone=concise(default)`
+
 ## When invoked as /promptargs
 
-When the user types `/promptargs` with arguments, run the promptargs CLI with those arguments and present the expanded prompt output. If no arguments are given, show available templates with `promptargs list`.
+When the user types `/promptargs` with arguments, run the promptargs CLI with those arguments and present the expanded prompt output. If no arguments are given, run `promptargs env` to show the current environment, then `promptargs list` to show available templates.
 
-If the user provides a template name and variables, run it and use the expanded output as the prompt for the current task. For example:
+If the user provides a template name and variables, first show the status line (`--status`), then run the template and use the expanded output as the prompt for the current task. For example:
 
-- `/promptargs review --file=src/api.ts` → run the review template and perform the review
+- `/promptargs` → show env + list available templates
+- `/promptargs review --file=src/api.ts` → show status, run the review template, perform the review
 - `/promptargs list` → show available templates
 - `/promptargs init` → create starter templates
+- `/promptargs env` → show auto-detected variable values

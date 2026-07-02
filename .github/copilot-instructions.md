@@ -19,6 +19,9 @@ promptargs list
 
 # Create starter templates
 promptargs init
+
+# Show auto-detected variable values
+promptargs env
 ```
 
 ## Install
@@ -34,6 +37,20 @@ npm install -g @kubestellar/promptargs
 
 Templates live in `.prompts/` (project) or `~/.prompts/` (user).
 
-## Auto-detected variables
+## Status line
 
-`{{branch}}`, `{{repo}}`, `{{org}}`, `{{user}}`, `{{date}}`, `{{diff}}`, `{{pr}}` — filled from git context automatically.
+When running a template, ALWAYS run `promptargs env` first and display the auto-detected variable values to the user. This shows what the CLI already knows about the current environment (branch, repo, org, user, date, diff, pr).
+
+After running a template, show the fill state with `--status`:
+```bash
+promptargs review --file=main.go --status
+```
+
+Output: `✅ review: file=main.go  focus=correctness(default)  tone=concise(default)`
+
+## When the user asks to use promptargs
+
+1. Run `promptargs env` to show the current environment
+2. Run the requested template with `--status` to show the fill state
+3. Run the template with `--no-interactive` to get the expanded prompt
+4. Use the expanded prompt as context for the task
