@@ -17,6 +17,7 @@ import { parseVars, expand } from './parser.js';
 import { findTemplate, loadTemplates } from './loader.js';
 import { resolve } from './resolver.js';
 import { renderStatus } from './status.js';
+import { autodetect, AUTODETECT_VARS } from './autodetect.js';
 
 const HELP = `
 promptargs — Template arguments for AI prompts 🏴‍☠️
@@ -27,6 +28,7 @@ Usage:
   promptargs list                      Show available templates
   promptargs init                      Create .prompts/ with examples
   promptargs show <template>           Preview a template
+  promptargs env                       Show auto-detected variable values
   promptargs help                      Show this help
 
 Flags:
@@ -64,6 +66,12 @@ async function main() {
 
   if (args.length === 0 || args[0] === 'help' || args[0] === '--help') {
     console.log(HELP);
+    printEnv();
+    return;
+  }
+
+  if (args[0] === 'env') {
+    printEnv();
     return;
   }
 
@@ -225,6 +233,25 @@ function doShow(templateName?: string) {
   console.log(`Template: ${tpl.name} (${tpl.path})\n`);
   console.log(highlighted);
   console.log('\n\x1b[31mred\x1b[0m = required  \x1b[33myellow\x1b[0m = has default');
+}
+
+const DIFF_PREVIEW_MAX_CHARS = 60;
+
+function printEnv() {
+  console.log('Auto-detected variables:\n');
+  for (const name of AUTODETECT_VARS) {
+    const value = autodetect(name);
+    if (value !== undefined) {
+      let display = value;
+      if (name === 'diff' && display.length > DIFF_PREVIEW_MAX_CHARS) {
+        display = display.slice(0, DIFF_PREVIEW_MAX_CHARS) + '...';
+      }
+      console.log(`  \x1b[32m{{${name}}}\x1b[0m = ${display}`);
+    } else {
+      console.log(`  \x1b[90m{{${name}}}\x1b[0m = (not detected)`);
+    }
+  }
+  console.log('');
 }
 
 main().catch(err => {

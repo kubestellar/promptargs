@@ -42,6 +42,8 @@ const DETECTORS: Record<string, () => string | undefined> = {
   date: () => new Date().toISOString().split('T')[0],
 };
 
+export const AUTODETECT_VARS = Object.keys(DETECTORS);
+
 export function autodetect(varName: string): string | undefined {
   const detector = DETECTORS[varName];
   return detector ? detector() : undefined;

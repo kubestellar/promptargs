@@ -42,6 +42,7 @@ const DETECTORS = {
     user: () => git('config user.name'),
     date: () => new Date().toISOString().split('T')[0],
 };
+export const AUTODETECT_VARS = Object.keys(DETECTORS);
 export function autodetect(varName) {
     const detector = DETECTORS[varName];
     return detector ? detector() : undefined;
