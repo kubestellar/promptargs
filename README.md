@@ -250,7 +250,11 @@ Project templates override personal ones with the same name.
 
 ## Auto-Magic Variables ✨
 
-Some variable names fill themselves automatically from your git context:
+promptargs discovers variables from two sources:
+
+### 1. Git context (always detected)
+
+These variable names fill themselves automatically when you're in a git repo:
 
 | Variable | Auto-fills with |
 |----------|----------------|
@@ -262,7 +266,27 @@ Some variable names fill themselves automatically from your git context:
 | `{{diff}}` | Staged or unstaged diff |
 | `{{pr}}` | Current PR number |
 
-You can always override them with flags. Auto-detect is just the fallback.
+### 2. Terminal environment (any env var)
+
+Any environment variable in your terminal is available as a template variable. Use the same name:
+
+```bash
+# If your terminal has DATABASE_URL and AWS_REGION set:
+promptargs "Connect to {{DATABASE_URL}} in {{AWS_REGION}}"
+```
+
+In the **Builder UI** (`promptargs ui`), click "Show terminal env" to see all available env vars from your shell. Click any one to insert it at the cursor.
+
+Common useful env vars: `NODE_ENV`, `AWS_REGION`, `DATABASE_URL`, `GITHUB_TOKEN`, `CI`, `USER`, `EDITOR`, `PATH`.
+
+### Priority
+
+You can always override any auto-detected value with a flag. The order is:
+
+1. `--flag=value` (explicit, always wins)
+2. Interactive prompt (if no flag and not `--no-interactive`)
+3. Auto-detect from environment
+4. Template default (`{{name=fallback}}`)
 
 ---
 
@@ -302,8 +326,11 @@ promptargs ui
 
 Opens a browser at `http://localhost:3700` with:
 
+- **Preset examples** — 8 clickable templates (review, explain, fix, test, migrate, security, docs, refactor)
 - **Template editor** — type your template, variables auto-populate below
 - **Variable table** — set values, arrays (comma-separated), and sources (manual, glob, @file)
+- **Environment panel** — git context vars + all terminal env vars, click any to insert `{{var}}` at cursor
+- **Mustache cheatsheet** — collapsible syntax reference for template features
 - **Zip / Cross toggle** — switch array iteration mode
 - **Live preview** — see expanded output update as you type
 - **CLI command** — copy the generated command with one click

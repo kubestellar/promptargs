@@ -45,7 +45,10 @@ const DETECTORS = {
 export const AUTODETECT_VARS = Object.keys(DETECTORS);
 export function autodetect(varName) {
     const detector = DETECTORS[varName];
-    return detector ? detector() : undefined;
+    if (detector)
+        return detector();
+    // Fall back to terminal environment variables
+    return process.env[varName] ?? undefined;
 }
 export function autodetectAll(varNames) {
     const result = {};

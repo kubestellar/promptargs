@@ -421,6 +421,114 @@
   .env-eq { color: #4a4a66; }
   .env-val { color: #6b7a8d; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+  .env-group-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #4a4a66;
+    margin-top: 6px;
+  }
+
+  .env-group-label:first-child { margin-top: 0; }
+
+  /* --- Collapsible toggle --- */
+  .toggle-btn {
+    background: none;
+    border: 1px solid #3a3a56;
+    border-radius: 3px;
+    color: #6b7a8d;
+    font-size: 11px;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 3px 10px;
+    cursor: pointer;
+    align-self: flex-start;
+  }
+
+  .toggle-btn:hover { border-color: #d4a447; color: #d4a447; }
+  .toggle-btn:focus-visible { outline: 2px solid #d4a447; outline-offset: 1px; }
+
+  /* --- Cheatsheet --- */
+  .cheatsheet {
+    background: #0e0e1c;
+    border: 1px solid #2a2a42;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .cheatsheet-toggle {
+    background: #1e1e34;
+    border: none;
+    width: 100%;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    color: #6b7a8d;
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 11px;
+    text-align: left;
+  }
+
+  .cheatsheet-toggle:hover { color: #d4a447; }
+  .cheatsheet-toggle:focus-visible { outline: 2px solid #d4a447; outline-offset: -2px; }
+
+  .cheatsheet-arrow {
+    transition: transform 0.2s;
+    font-size: 10px;
+  }
+
+  .cheatsheet.open .cheatsheet-arrow { transform: rotate(90deg); }
+
+  .cheatsheet-body {
+    display: none;
+    padding: 14px;
+    border-top: 1px solid #2a2a42;
+  }
+
+  .cheatsheet.open .cheatsheet-body { display: block; }
+
+  .cheat-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12px;
+  }
+
+  .cheat-table th {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #4a4a66;
+    text-align: left;
+    padding: 0 8px 6px;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .cheat-table td {
+    padding: 4px 8px;
+    vertical-align: top;
+    border-top: 1px solid #1e1e34;
+  }
+
+  .cheat-table td:first-child {
+    font-family: "Courier New", Consolas, monospace;
+    color: #d4a447;
+    white-space: nowrap;
+  }
+
+  .cheat-table td:nth-child(2) {
+    color: #6b7a8d;
+  }
+
+  .cheat-table td:nth-child(3) {
+    font-family: "Courier New", Consolas, monospace;
+    color: #e8e4dc;
+    font-size: 11px;
+  }
+
   /* --- Responsive --- */
   @media (max-width: 520px) {
     body { padding: 20px 14px; }
@@ -467,8 +575,45 @@
   </div>
 
   <div class="section" id="env-section" style="display:none">
-    <div class="section-label">Auto-detected (click to insert at cursor)</div>
-    <div class="env-strip" id="env-body"></div>
+    <div class="section-label">Environment (click to insert at cursor)</div>
+    <div id="env-git-group">
+      <div class="env-group-label">Git context</div>
+      <div class="env-strip" id="env-git"></div>
+    </div>
+    <div id="env-terminal-group" style="display:none">
+      <div class="env-group-label">Terminal env</div>
+      <div class="env-strip" id="env-terminal"></div>
+    </div>
+    <button class="toggle-btn" id="env-toggle" type="button" style="display:none">Show terminal env</button>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Mustache cheatsheet</div>
+    <div class="cheatsheet" id="cheatsheet">
+      <button class="cheatsheet-toggle" type="button" id="cheatsheet-toggle">
+        <span>Template syntax reference</span>
+        <span class="cheatsheet-arrow">&#9654;</span>
+      </button>
+      <div class="cheatsheet-body">
+        <table class="cheat-table">
+          <thead><tr><th>Syntax</th><th>What it does</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>{{name}}</td><td>Variable (required)</td><td>{{file}} &rarr; main.go</td></tr>
+            <tr><td>{{name=val}}</td><td>Variable with default</td><td>{{tone=concise}} &rarr; concise</td></tr>
+            <tr><td>{{! text }}</td><td>Comment (ignored)</td><td>{{! TODO: add more }}</td></tr>
+            <tr><td>{{#list}}...{{/list}}</td><td>Section (repeat block)</td><td>{{#files}}Review {{.}}{{/files}}</td></tr>
+            <tr><td>{{^list}}...{{/list}}</td><td>Inverted section (if empty)</td><td>{{^files}}No files{{/files}}</td></tr>
+            <tr><td>{{> partial}}</td><td>Include another template</td><td>{{> header}}</td></tr>
+            <tr><td>{{{name}}}</td><td>Unescaped output</td><td>{{{html}}} &rarr; raw HTML</td></tr>
+            <tr><td>{{&amp;name}}</td><td>Unescaped (alt syntax)</td><td>Same as {{{name}}}</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 10px; font-size: 11px; color: #4a4a66;">
+          promptargs extends Mustache with <span style="color:#d4a447">{{name=default}}</span> syntax and array iteration via <span style="color:#d4a447">--cross</span> mode.
+          Full spec: <a href="https://mustache.github.io/mustache.5.html" target="_blank" rel="noopener" style="color: #6b7a8d;">mustache.github.io</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="section">
@@ -856,27 +1001,62 @@
     });
   });
 
-  // Render env vars if provided by the server
-  if (window.__PROMPTARGS_ENV__) {
-    const envBox = document.getElementById('env-body');
-    const envSection = document.getElementById('env-section');
-    if (envBox && envSection) {
-      const env = window.__PROMPTARGS_ENV__;
-      const entries = Object.entries(env).filter(([, v]) => v);
-      if (entries.length > 0) {
-        envSection.style.display = '';
-        envBox.innerHTML = '';
-        for (const [k, v] of entries) {
-          const span = document.createElement('span');
-          span.className = 'env-entry';
-          span.title = `Click to insert {{${k}}} at cursor`;
-          span.innerHTML = `<span class="env-key">{{${escHtml(k)}}}</span> <span class="env-eq">=</span> <span class="env-val">${escHtml(v)}</span>`;
-          span.addEventListener('click', () => insertAtCursor(`{{${k}}}`));
-          envBox.appendChild(span);
-        }
-      }
+  function renderEnvChips(container, entries) {
+    container.innerHTML = '';
+    for (const [k, v] of entries) {
+      const span = document.createElement('span');
+      span.className = 'env-entry';
+      span.title = `Click to insert {{${k}}} at cursor`;
+      span.innerHTML = `<span class="env-key">{{${escHtml(k)}}}</span> <span class="env-eq">=</span> <span class="env-val">${escHtml(v)}</span>`;
+      span.addEventListener('click', () => insertAtCursor(`{{${k}}}`));
+      container.appendChild(span);
     }
   }
+
+  // Render env vars if provided by the server
+  if (window.__PROMPTARGS_ENV__) {
+    const envSection = document.getElementById('env-section');
+    const envGit = document.getElementById('env-git');
+    const envTerminal = document.getElementById('env-terminal');
+    const envGitGroup = document.getElementById('env-git-group');
+    const envTerminalGroup = document.getElementById('env-terminal-group');
+    const envToggle = document.getElementById('env-toggle');
+    const data = window.__PROMPTARGS_ENV__;
+
+    const gitEntries = Object.entries(data.git || {}).filter(([, v]) => v);
+    const termEntries = Object.entries(data.terminal || {}).filter(([, v]) => v);
+
+    if (gitEntries.length > 0 || termEntries.length > 0) {
+      envSection.style.display = '';
+    }
+
+    if (gitEntries.length > 0) {
+      renderEnvChips(envGit, gitEntries);
+    } else {
+      envGitGroup.style.display = 'none';
+    }
+
+    if (termEntries.length > 0) {
+      envToggle.style.display = '';
+      let termVisible = false;
+      envToggle.addEventListener('click', () => {
+        termVisible = !termVisible;
+        envTerminalGroup.style.display = termVisible ? '' : 'none';
+        envToggle.textContent = termVisible ? 'Hide terminal env' : `Show terminal env (${termEntries.length} vars)`;
+        if (termVisible && envTerminal.children.length === 0) {
+          renderEnvChips(envTerminal, termEntries);
+        }
+      });
+      envToggle.textContent = `Show terminal env (${termEntries.length} vars)`;
+    }
+  }
+
+  // Cheatsheet toggle
+  const cheatsheet = document.getElementById('cheatsheet');
+  const cheatsheetToggle = document.getElementById('cheatsheet-toggle');
+  cheatsheetToggle.addEventListener('click', () => {
+    cheatsheet.classList.toggle('open');
+  });
 
   // Init
   renderPresets();

@@ -6,17 +6,43 @@ import { autodetect, AUTODETECT_VARS } from './autodetect.js';
 const DEFAULT_PORT = 3700;
 const OPEN_DELAY_MS = 500;
 const DIFF_PREVIEW_MAX_CHARS = 60;
+const ENV_VAL_PREVIEW_MAX_CHARS = 80;
+const SKIP_ENV_PREFIXES = [
+    'npm_', 'LESS', 'LS_COLORS', 'LSCOLORS', 'TERM_', 'XPC_', 'SECURITYSESSION',
+    'COMMAND_MODE', 'LaunchInstanceID', 'ITERM', '__CF', '__NEXT', 'VSCODE',
+    'ELECTRON', 'CHROME', 'COLORTERM', 'SHLVL', 'LOGNAME', 'OLDPWD', '_',
+];
+const SKIP_ENV_EXACT = new Set([
+    'HOME', 'PWD', 'SHELL', 'TERM', 'TMPDIR', 'LANG', 'LC_ALL', 'LC_CTYPE',
+    'PAGER', 'MANPATH', 'INFOPATH', 'DISPLAY', 'SSH_AUTH_SOCK', 'TERM_PROGRAM',
+    'TERM_PROGRAM_VERSION', 'TERM_SESSION_ID', 'Apple_PubSub_Socket_Render',
+    'MallocNanoZone', 'ORIGINAL_XDG_CURRENT_DESKTOP', 'GIT_ASKPASS',
+]);
+function shouldSkipEnv(key) {
+    if (SKIP_ENV_EXACT.has(key))
+        return true;
+    return SKIP_ENV_PREFIXES.some(p => key.startsWith(p));
+}
+function truncateValue(val, max) {
+    return val.length > max ? val.slice(0, max) + '...' : val;
+}
 function collectEnvVars() {
-    const env = {};
+    const git = {};
     for (const name of AUTODETECT_VARS) {
         const value = autodetect(name);
         if (value !== undefined) {
-            env[name] = name === 'diff' && value.length > DIFF_PREVIEW_MAX_CHARS
-                ? value.slice(0, DIFF_PREVIEW_MAX_CHARS) + '...'
+            git[name] = name === 'diff'
+                ? truncateValue(value, DIFF_PREVIEW_MAX_CHARS)
                 : value;
         }
     }
-    return env;
+    const terminal = {};
+    for (const [key, val] of Object.entries(process.env)) {
+        if (!val || shouldSkipEnv(key))
+            continue;
+        terminal[key] = truncateValue(val, ENV_VAL_PREVIEW_MAX_CHARS);
+    }
+    return { git, terminal };
 }
 export function startUI(port = DEFAULT_PORT) {
     const __dirname = dirname(fileURLToPath(import.meta.url));
