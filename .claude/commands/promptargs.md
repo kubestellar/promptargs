@@ -106,10 +106,28 @@ Output: `✅ review: file=main.go  focus=correctness(default)  tone=concise(defa
 
 ## When invoked as /promptargs
 
-When the user types `/promptargs` with arguments, run the promptargs CLI with those arguments and present the expanded prompt output. If no arguments are given, run `promptargs env` to show the current environment, then `promptargs list` to show available templates.
+When the user types `/promptargs`, ALWAYS start by running `promptargs env` and displaying the auto-detected variable values. This is mandatory — the user must always see what values promptargs already knows before any template expansion.
 
-- `/promptargs` — show env + list available templates
-- `/promptargs review --file=src/api.ts` — show status, run the review template, perform the review
-- `/promptargs list` — show available templates
+### Step 1: ALWAYS show env vars first
+
+Run `promptargs env` and display the output. Example:
+
+```
+Auto-detected variables:
+
+  {{branch}} = feat/auth-refactor
+  {{repo}} = my-project
+  {{org}} = kubestellar
+  {{diff}} = (not detected)
+  {{pr}} = (not detected)
+  {{user}} = Andy Anderson
+  {{date}} = 2026-07-02
+```
+
+### Step 2: Then handle the command
+
+- `/promptargs` (no args) — after showing env, run `promptargs list` to show available templates
+- `/promptargs review --file=src/api.ts` — after showing env, show status line (`--status`), then run the template and perform the review
+- `/promptargs list` — after showing env, list templates
 - `/promptargs init` — create starter templates
-- `/promptargs env` — show auto-detected variable values
+- `/promptargs env` — just show env (already done in step 1)
