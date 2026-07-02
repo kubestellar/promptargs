@@ -8,7 +8,6 @@
     "promptargs": "dist/cli.js"
   },
   "scripts": {
-    "prepare": "tsc",
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "node --test dist/**/*.test.js",
