@@ -55,7 +55,17 @@ Output: `✅ review: file=main.go  focus=correctness(default)  tone=concise(defa
 
 ## When the user asks to use promptargs
 
-1. Run `promptargs env` to show the current environment
+1. **ALWAYS run `promptargs env` first** and display the output — the user must see what values promptargs already knows (branch, repo, org, user, date, diff, pr) before any template expansion
 2. Run the requested template with `--status` to show the fill state
 3. Run the template with `--no-interactive` to get the expanded prompt
 4. Use the expanded prompt as context for the task
+
+## Status display
+
+Every time promptargs is mentioned or a template is run, show the auto-detected variables inline:
+
+```
+🏴‍☠️ promptargs env: branch=main  repo=my-project  org=kubestellar  user=Andy Anderson  date=2026-07-02
+```
+
+This gives the user immediate visibility into what values are pre-filled.
