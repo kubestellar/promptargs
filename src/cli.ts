@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * promptlibs CLI — Mad Libs for AI prompts.
+ * promptargs CLI — Template arguments for AI prompts.
  *
  * Usage:
- *   promptlibs <template>              # interactive mode
- *   promptlibs <template> --var=value   # fill from flags
- *   promptlibs list                     # show available templates
- *   promptlibs init                     # create .prompts/ with examples
- *   promptlibs show <template>          # show template with vars highlighted
+ *   promptargs <template>              # interactive mode
+ *   promptargs <template> --var=value   # fill from flags
+ *   promptargs list                     # show available templates
+ *   promptargs init                     # create .prompts/ with examples
+ *   promptargs show <template>          # show template with vars highlighted
  */
 
 import { mkdirSync, writeFileSync, existsSync } from 'node:fs';
@@ -19,15 +19,15 @@ import { resolve } from './resolver.js';
 import { renderStatus } from './status.js';
 
 const HELP = `
-promptlibs — Mad Libs for AI prompts 🎲
+promptargs — Template arguments for AI prompts 🎲
 
 Usage:
-  promptlibs <template>                Run a template (interactive)
-  promptlibs <template> --var=value    Fill variables from flags
-  promptlibs list                      Show available templates
-  promptlibs init                      Create .prompts/ with examples
-  promptlibs show <template>           Preview a template
-  promptlibs help                      Show this help
+  promptargs <template>                Run a template (interactive)
+  promptargs <template> --var=value    Fill variables from flags
+  promptargs list                      Show available templates
+  promptargs init                      Create .prompts/ with examples
+  promptargs show <template>           Preview a template
+  promptargs help                      Show this help
 
 Flags:
   --no-interactive    Skip interactive prompts (use defaults/auto only)
@@ -96,8 +96,8 @@ async function main() {
     const tpl = findTemplate(templateName);
     if (!tpl) {
       console.error(`Template "${templateName}" not found.`);
-      console.error('Run "promptlibs list" to see available templates.');
-      console.error('Run "promptlibs init" to create example templates.');
+      console.error('Run "promptargs list" to see available templates.');
+      console.error('Run "promptargs init" to create example templates.');
       process.exit(1);
       return;
     }
@@ -175,14 +175,14 @@ function doInit() {
   console.log('  explain.md — Explain code simply');
   console.log('  fix.md     — Bug fix template');
   console.log('');
-  console.log('Try it: promptlibs review --file=src/main.ts');
+  console.log('Try it: promptargs review --file=src/main.ts');
 }
 
 function doList() {
   const templates = loadTemplates();
   if (templates.length === 0) {
     console.log('No templates found.');
-    console.log('Run "promptlibs init" to create example templates.');
+    console.log('Run "promptargs init" to create example templates.');
     return;
   }
   console.log('Available templates:\n');
@@ -201,7 +201,7 @@ function doList() {
 
 function doShow(templateName?: string) {
   if (!templateName) {
-    console.error('Usage: promptlibs show <template>');
+    console.error('Usage: promptargs show <template>');
     process.exit(1);
     return;
   }

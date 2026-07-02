@@ -1,11 +1,11 @@
 {
-  "name": "promptlibs",
+  "name": "promptargs",
   "version": "0.1.0",
-  "description": "Mad Libs for AI prompts — template variables for Claude Code, Copilot, and more",
+  "description": "Template arguments for AI prompts — variable substitution for Claude Code, Copilot, and more",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "promptlibs": "dist/cli.js"
+    "promptargs": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
@@ -19,19 +19,19 @@
     "ai",
     "claude",
     "copilot",
-    "mad-libs",
+    "args",
     "cli"
   ],
   "author": "KubeStellar",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kubestellar/promptlibs.git"
+    "url": "git+https://github.com/kubestellar/promptargs.git"
   },
   "bugs": {
-    "url": "https://github.com/kubestellar/promptlibs/issues"
+    "url": "https://github.com/kubestellar/promptargs/issues"
   },
-  "homepage": "https://github.com/kubestellar/promptlibs#readme",
+  "homepage": "https://github.com/kubestellar/promptargs#readme",
   "engines": {
     "node": ">=18"
   },
