@@ -34,15 +34,15 @@ Or just run it without installing:
 npx @kubestellar/promptargs help
 ```
 
-### As a Skill
+### As a Slash Command / Skill
 
 This repo ships skill files for multiple AI coding tools. Install the one(s) you use:
 
 **Claude Code:**
 ```bash
-mkdir -p ~/.claude/skills
-curl -o ~/.claude/skills/promptargs.md \
-  https://raw.githubusercontent.com/kubestellar/promptargs/main/.claude/skills/promptargs.md
+mkdir -p ~/.claude/commands
+curl -o ~/.claude/commands/promptargs.md \
+  https://raw.githubusercontent.com/kubestellar/promptargs/main/.claude/commands/promptargs.md
 ```
 
 **Goose:**
