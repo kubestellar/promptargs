@@ -16,7 +16,7 @@ import { findTemplate, loadTemplates } from './loader.js';
 import { resolve } from './resolver.js';
 import { renderStatus } from './status.js';
 const HELP = `
-promptargs — Template arguments for AI prompts 🎲
+promptargs — Template arguments for AI prompts 🏴‍☠️
 
 Usage:
   promptargs <template>                Run a template (interactive)

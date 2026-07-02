@@ -1,4 +1,4 @@
-# promptargs 🎲
+# promptargs 🏴‍☠️
 
 **Template arguments for AI prompts.**
 
@@ -34,17 +34,32 @@ Or just run it without installing:
 npx @kubestellar/promptargs help
 ```
 
-### Claude Code Skill
+### As a Skill (Claude Code, Copilot, Goose, Bob)
 
-Copy the skill file to your global Claude Code skills:
+This repo includes skill files for multiple AI CLIs. Copy the one you use:
 
+**Claude Code:**
 ```bash
 mkdir -p ~/.claude/skills
 curl -o ~/.claude/skills/promptargs.md \
   https://raw.githubusercontent.com/kubestellar/promptargs/main/.claude/skills/promptargs.md
 ```
 
-Now `/promptargs` works in every Claude Code session.
+**Goose:**
+```bash
+mkdir -p ~/.config/goose/skills
+curl -o ~/.config/goose/skills/promptargs.md \
+  https://raw.githubusercontent.com/kubestellar/promptargs/main/.goose/agents/promptargs.md
+```
+
+**Bob (IBM):**
+```bash
+mkdir -p ~/.bob/skills
+curl -o ~/.bob/skills/promptargs.md \
+  https://raw.githubusercontent.com/kubestellar/promptargs/main/.bob/skills/promptargs.md
+```
+
+**Copilot:** Automatically detected from `.github/copilot-instructions.md` when you clone this repo.
 
 ---
 
