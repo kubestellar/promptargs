@@ -7,4 +7,4 @@ export interface ResolvedValues {
     values: Record<string, string>;
     iterations: Record<string, string>[];
 }
-export declare function resolve(vars: TemplateVar[], flags: Record<string, string>, interactive: boolean): Promise<ResolvedValues>;
+export declare function resolve(vars: TemplateVar[], flags: Record<string, string>, interactive: boolean, cross?: boolean): Promise<ResolvedValues>;

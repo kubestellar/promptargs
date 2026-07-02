@@ -37,7 +37,20 @@ function expandArrayValue(raw) {
     }
     return [raw];
 }
-export async function resolve(vars, flags, interactive) {
+function cartesian(arrays) {
+    if (arrays.length === 0)
+        return [[]];
+    const [first, ...rest] = arrays;
+    const restCombos = cartesian(rest);
+    const result = [];
+    for (const val of first) {
+        for (const combo of restCombos) {
+            result.push([val, ...combo]);
+        }
+    }
+    return result;
+}
+export async function resolve(vars, flags, interactive, cross = false) {
     const values = {};
     const arrayVars = {};
     let hasArrays = false;
@@ -82,17 +95,29 @@ export async function resolve(vars, flags, interactive) {
     if (!hasArrays) {
         return { values, iterations: [values] };
     }
-    // Zip mode: iterate over the longest array, cycling shorter ones
     const arrayNames = Object.keys(arrayVars);
-    const maxLen = Math.max(...arrayNames.map(n => arrayVars[n].length));
     const iterations = [];
-    for (let i = 0; i < maxLen; i++) {
-        const iter = { ...values };
-        for (const name of arrayNames) {
-            const arr = arrayVars[name];
-            iter[name] = arr[i % arr.length];
+    if (cross) {
+        const arrays = arrayNames.map(n => arrayVars[n]);
+        const combos = cartesian(arrays);
+        for (const combo of combos) {
+            const iter = { ...values };
+            for (let j = 0; j < arrayNames.length; j++) {
+                iter[arrayNames[j]] = combo[j];
+            }
+            iterations.push(iter);
         }
-        iterations.push(iter);
+    }
+    else {
+        const maxLen = Math.max(...arrayNames.map(n => arrayVars[n].length));
+        for (let i = 0; i < maxLen; i++) {
+            const iter = { ...values };
+            for (const name of arrayNames) {
+                const arr = arrayVars[name];
+                iter[name] = arr[i % arr.length];
+            }
+            iterations.push(iter);
+        }
     }
     return { values, iterations };
 }

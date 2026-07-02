@@ -183,9 +183,9 @@ Each one gets its own expanded prompt, separated by `---`.
 | `--file="src/*.go"` | Glob pattern (expands to matching files) |
 | `--file=@list.txt` | Reads one value per line from a file |
 
-### Multiple arrays = zip
+### Multiple arrays: zip vs cross-product
 
-If you pass two arrays, they zip together:
+**Zip mode (default):** arrays pair up 1:1:
 
 ```bash
 promptargs "Review {{file}} for {{focus}}" \
@@ -198,6 +198,29 @@ promptargs "Review {{file}} for {{focus}}" \
 ✅ [2/3]: file=auth.go  focus=perf
 ✅ [3/3]: file=db.go    focus=correctness
 ```
+
+**Cross-product mode (`--cross`):** every combination of every value:
+
+```bash
+promptargs "Review {{file}} for {{focus}}" \
+  --file=api.go,auth.go,db.go \
+  --focus=security,perf,correctness \
+  --cross
+```
+
+```
+✅ [1/9]: file=api.go   focus=security
+✅ [2/9]: file=api.go   focus=perf
+✅ [3/9]: file=api.go   focus=correctness
+✅ [4/9]: file=auth.go  focus=security
+✅ [5/9]: file=auth.go  focus=perf
+✅ [6/9]: file=auth.go  focus=correctness
+✅ [7/9]: file=db.go    focus=security
+✅ [8/9]: file=db.go    focus=perf
+✅ [9/9]: file=db.go    focus=correctness
+```
+
+3 files × 3 focuses = 9 runs. Use `--cross` when you want the full matrix.
 
 ---
 
@@ -322,6 +345,7 @@ If you installed the skill (see [Install](#as-a-skill)), use it directly inside 
 | `promptargs review` | Run template interactively |
 | `promptargs "inline {{var}}"` | Use inline template |
 | `--no-interactive` | Skip questions, use defaults only |
+| `--cross` | Cross-product mode (all combinations) |
 | `--json` | Output as JSON |
 | `--status` | Output status line only |
 | `... \| claude -p "do this"` | Pipe to Claude |
