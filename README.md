@@ -1,10 +1,10 @@
-# promptlibs 🎲
+# promptargs 🎲
 
 **Mad Libs for AI prompts.**
 
 You know Mad Libs? The game where you fill in blanks to make silly stories?
 
-**promptlibs** does the same thing, but for AI prompts. You write a template with blanks (`{{like_this}}`), and promptlibs fills them in.
+**promptargs** does the same thing, but for AI prompts. You write a template with blanks (`{{like_this}}`), and promptargs fills them in.
 
 ```
 Review {{file}} for {{focus}} issues.
@@ -23,13 +23,13 @@ That's it. That's the whole idea.
 ## Install
 
 ```bash
-npm install -g promptlibs
+npm install -g promptargs
 ```
 
 Or just run it without installing:
 
 ```bash
-npx promptlibs help
+npx promptargs help
 ```
 
 ---
@@ -39,7 +39,7 @@ npx promptlibs help
 ### Step 1: Make some templates
 
 ```bash
-promptlibs init
+promptargs init
 ```
 
 This creates a `.prompts/` folder with 3 starter templates. Done!
@@ -47,7 +47,7 @@ This creates a `.prompts/` folder with 3 starter templates. Done!
 ### Step 2: See what you have
 
 ```bash
-promptlibs list
+promptargs list
 ```
 
 ```
@@ -66,7 +66,7 @@ Available templates:
 ### Step 3: Use a template
 
 ```bash
-promptlibs review --file=src/app.ts
+promptargs review --file=src/app.ts
 ```
 
 ```
@@ -90,7 +90,7 @@ That's all the syntax there is. Two curly braces, a name, optionally an equals s
 ### Red means "you need to fill this in"
 
 ```bash
-promptlibs show review
+promptargs show review
 ```
 
 Shows the template with **red** blanks (required) and **yellow** blanks (has a default).
@@ -102,13 +102,13 @@ Shows the template with **red** blanks (required) and **yellow** blanks (has a d
 ### From the command line
 
 ```bash
-promptlibs review --file=main.go --focus=security --tone=detailed
+promptargs review --file=main.go --focus=security --tone=detailed
 ```
 
 ### Interactively (just run it, it asks you)
 
 ```bash
-promptlibs review
+promptargs review
   file: main.go
   focus: (correctness)     ← press Enter to keep default
   tone: detailed
@@ -117,7 +117,7 @@ promptlibs review
 ### Inline (no template file needed)
 
 ```bash
-promptlibs "Explain {{thing}} to a {{audience=5-year-old}}" --thing=recursion
+promptargs "Explain {{thing}} to a {{audience=5-year-old}}" --thing=recursion
 ```
 
 ```
@@ -131,10 +131,10 @@ Explain recursion to a 5-year-old
 Want to review 5 files? Don't run the command 5 times. Use a comma:
 
 ```bash
-promptlibs review --file=api.go,auth.go,db.go,cache.go,main.go
+promptargs review --file=api.go,auth.go,db.go,cache.go,main.go
 ```
 
-promptlibs runs the template **once for each value**:
+promptargs runs the template **once for each value**:
 
 ```
 ✅ review [1/5]: file=api.go    focus=correctness  tone=concise
@@ -159,7 +159,7 @@ Each one gets its own expanded prompt, separated by `---`.
 If you pass two arrays, they zip together:
 
 ```bash
-promptlibs "Review {{file}} for {{focus}}" \
+promptargs "Review {{file}} for {{focus}}" \
   --file=api.go,auth.go,db.go \
   --focus=security,perf,correctness
 ```
@@ -206,19 +206,19 @@ You can always override them with flags. Auto-detect is just the fallback.
 ### Plain text (default)
 
 ```bash
-promptlibs review --file=main.go
+promptargs review --file=main.go
 ```
 
 ### JSON
 
 ```bash
-promptlibs review --file=main.go --json
+promptargs review --file=main.go --json
 ```
 
 ### Status line (for IDE integration)
 
 ```bash
-promptlibs review --file=main.go --status
+promptargs review --file=main.go --status
 ```
 
 ```
@@ -240,7 +240,7 @@ I learn best with {{style=examples and analogies}}.
 Now use it:
 
 ```bash
-promptlibs buddy --topic="async/await"
+promptargs buddy --topic="async/await"
 ```
 
 ```
@@ -254,12 +254,12 @@ I learn best with examples and analogies.
 
 | Command | What it does |
 |---------|-------------|
-| `promptlibs init` | Create `.prompts/` with examples |
-| `promptlibs list` | Show all available templates |
-| `promptlibs show review` | Preview template with highlighted blanks |
-| `promptlibs review --file=x` | Run template with flags |
-| `promptlibs review` | Run template interactively |
-| `promptlibs "inline {{var}}"` | Use inline template |
+| `promptargs init` | Create `.prompts/` with examples |
+| `promptargs list` | Show all available templates |
+| `promptargs show review` | Preview template with highlighted blanks |
+| `promptargs review --file=x` | Run template with flags |
+| `promptargs review` | Run template interactively |
+| `promptargs "inline {{var}}"` | Use inline template |
 | `--no-interactive` | Skip questions, use defaults only |
 | `--json` | Output as JSON |
 | `--status` | Output status line only |
