@@ -292,6 +292,30 @@ promptargs review --file=main.go --status
 
 ---
 
+## Builder UI
+
+Don't want to memorize flags? Open the visual builder:
+
+```bash
+promptargs ui
+```
+
+Opens a browser at `http://localhost:3700` with:
+
+- **Template editor** — type your template, variables auto-populate below
+- **Variable table** — set values, arrays (comma-separated), and sources (manual, glob, @file)
+- **Zip / Cross toggle** — switch array iteration mode
+- **Live preview** — see expanded output update as you type
+- **CLI command** — copy the generated command with one click
+
+Use `--port=N` if 3700 is taken:
+
+```bash
+promptargs ui --port=4000
+```
+
+---
+
 ## Write Your Own Template
 
 Create a file in `.prompts/` with any name ending in `.md`:
@@ -351,6 +375,7 @@ If you installed the skill (see [Install](#as-a-skill)), use it directly inside 
 
 | Command | What it does |
 |---------|-------------|
+| `promptargs ui` | Open the visual builder in your browser |
 | `promptargs init` | Create `.prompts/` with examples |
 | `promptargs list` | Show all available templates |
 | `promptargs show review` | Preview template with highlighted blanks |
