@@ -48,5 +48,9 @@ describe('expand', () => {
         const result = expand('Check {{file}}', { file: 'a.go' });
         assert.strictEqual(result, 'Check a.go');
     });
+    it('does not HTML-escape values', () => {
+        const result = expand('{{code}}', { code: '<div class="test">' });
+        assert.strictEqual(result, '<div class="test">');
+    });
 });
 //# sourceMappingURL=parser.test.js.map

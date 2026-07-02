@@ -1,6 +1,6 @@
 {
   "name": "@kubestellar/promptargs",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Template arguments for AI prompts — variable substitution for Claude Code, Copilot, and more",
   "type": "module",
   "main": "dist/index.js",
@@ -41,7 +41,11 @@
     "LICENSE"
   ],
   "devDependencies": {
+    "@types/mustache": "^4.2.6",
     "@types/node": "^26.1.0",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "mustache": "^4.2.0"
   }
 }

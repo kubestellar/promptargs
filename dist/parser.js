@@ -1,6 +1,8 @@
 /**
  * Parse {{variables}} and {{variables=defaults}} from template strings.
+ * Uses Mustache for expansion, with a promptargs extension for defaults.
  */
+import Mustache from 'mustache';
 const VAR_PATTERN = /\{\{(\w+)(?:=([^}]*))?\}\}/g;
 export function parseVars(template) {
     const seen = new Set();
@@ -19,12 +21,21 @@ export function parseVars(template) {
     return vars;
 }
 export function expand(template, values) {
-    return template.replace(VAR_PATTERN, (_match, name, defaultValue) => {
-        if (name in values)
-            return values[name];
-        if (defaultValue !== undefined)
-            return defaultValue;
-        return `{{${name}}}`;
-    });
+    const vars = parseVars(template);
+    const view = { ...values };
+    for (const v of vars) {
+        if (!(v.name in view) && v.defaultValue !== undefined) {
+            view[v.name] = v.defaultValue;
+        }
+        // Preserve unfilled vars as {{name}} in output
+        if (!(v.name in view)) {
+            view[v.name] = `{{${v.name}}}`;
+        }
+    }
+    // Convert {{var=default}} to {{var}} so Mustache can handle it
+    const normalized = template.replace(VAR_PATTERN, (_match, name) => `{{${name}}}`);
+    // Disable HTML escaping — we want raw text output
+    Mustache.escape = (text) => text;
+    return Mustache.render(normalized, view);
 }
 //# sourceMappingURL=parser.js.map

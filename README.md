@@ -110,11 +110,13 @@ Variables with `=something` already have a default. Variables without one will a
 
 ## How Blanks Work
 
+Powered by [Mustache](https://mustache.github.io/) — a logic-less template language available in every major language.
+
 A blank looks like this: `{{name}}`
 
-A blank with a default looks like this: `{{name=hello}}`
+A blank with a default looks like this: `{{name=hello}}` (promptargs extension)
 
-That's all the syntax there is. Two curly braces, a name, optionally an equals sign and a default.
+That's the basics. You also get the full Mustache spec — comments (`{{! ignore me}}`), sections, partials, and more.
 
 ### Red means "you need to fill this in"
 
